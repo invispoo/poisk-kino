@@ -1,10 +1,19 @@
 <template>
-    <div style="display: flex; justify-content: flex-end;">
+    <div v-if="showSearch">
+        <a-input-search
+        placeholder="Введите название фильма"
+        enter-button
+        size="large"
+        v-model:value="searchInput"
+        @search="searchFilm"
+        style="width: 900px;"
+        />
+    </div>
+    <div v-else>
         <a-space>
             <h2 style="padding-top: 6px;">Сортировка:</h2>
             <a-select
             style="width: 230px"
-            @focus=""
             @change="selectSort"
             >
                 <a-select-option value="best">Сначала с лучшей оценкой</a-select-option>
@@ -12,25 +21,28 @@
                 <a-select-option value="shortest">Сначала короткие</a-select-option>
                 <a-select-option value="newest">Сначала новые</a-select-option>
                 <a-select-option value="oldest">Сначала старые</a-select-option>
+                <a-select-option value="no">Отсутствует</a-select-option>
             </a-select>
         </a-space>
     </div>
 </template>
 
 <script>
+    import json from '../assets/kinopoisk.json'
     export default {
-        props: ['json'],
+        props: ['json', 'showSearch'],
         data () {
             return {
                 sortedArray: Array,
-                
+                sortType: String,
+                searchInput: '',
+                jsonCopy: json.docs,
             }
         },
         methods: {
             searchFilm () {
                 let array;
                 let index = 0;
-                this.searchFlag = true;
                 for (let i = 0; i < 10; i++) {
                     let pattern = this.json[i].name.toLowerCase();
                     if (pattern.includes(this.searchInput)) {
@@ -51,12 +63,12 @@
                 else if (this.sortType === 'newest')
                     this.sortedArray = this.shellSort('year', true);
                 else if (this.sortType === 'oldest')
-                    this.sortedArray = this.shellSort('year', false);
-                else this.sortedArray = this.json;
+                    this.sortedArray = this.shellSort('year', false);  
+                else this.sortedArray = JSON.parse(JSON.stringify(this.jsonCopy)); //?????????
                 this.$emit('sort', this.sortedArray);
             },
             shellSort(param1, sign, param2) {
-                let array = this.json;
+                let array = JSON.parse(JSON.stringify(this.json));
                 var increment = array.length / 2;
                 while (increment > 0) {
                     for (let i = increment; i < array.length; i++) {
