@@ -1,11 +1,10 @@
 <template>
     <div v-if="showSearch">
-        <a-input-search
+        <a-input
         placeholder="Введите название фильма"
-        enter-button
         size="large"
         v-model:value="searchInput"
-        @search="searchFilm"
+        @input="searchFilm"
         style="width: 900px;"
         />
     </div>
@@ -35,29 +34,30 @@
             return {
                 sortedArray: Array,
                 sortType: String,
-                searchedArray: [],
                 searchInput: '',
                 jsonCopy: jsonCopy.docs,
+                searchFlag: false,
             }
         },
         methods: {
             searchFilm () {
                 let index = 0;
-                if (this.searchInput === ''){
-                    this.searchedArray = JSON.parse(JSON.stringify(this.jsonCopy));
+                let searchedArray = [];
+                if (this.searchInput === '') {
+                    searchedArray = JSON.parse(JSON.stringify(this.json));
                 }
                 else {
+                    this.searchFlag = true;
                     for (let i = 0; i < this.json.length; i++) {
                         let pattern = this.json[i].name.toLowerCase();
                         if (pattern.includes(this.searchInput)) {
-                            this.searchedArray.splice(index, 0, this.json[i]);
+                            searchedArray.splice(index, 0, this.json[i]);
                             index++;
                         }
                     }
                 }
-
-                this.$emit('search', this.searchedArray);
-                this.searchedArray = [];
+                this.$emit('search', searchedArray, this.searchFlag); 
+                this.searchFlag = false;
             },
             selectSort (value) {
                 this.sortType = value;
