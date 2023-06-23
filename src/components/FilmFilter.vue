@@ -28,29 +28,36 @@
 </template>
 
 <script>
-    import json from '../assets/kinopoisk.json'
+    import jsonCopy from '../assets/kinopoisk.json'
     export default {
         props: ['json', 'showSearch'],
         data () {
             return {
                 sortedArray: Array,
                 sortType: String,
+                searchedArray: [],
                 searchInput: '',
-                jsonCopy: json.docs,
+                jsonCopy: jsonCopy.docs,
             }
         },
         methods: {
             searchFilm () {
-                let array;
                 let index = 0;
-                for (let i = 0; i < 10; i++) {
-                    let pattern = this.json[i].name.toLowerCase();
-                    if (pattern.includes(this.searchInput)) {
-                        array.splice(index, 0, this.json[i]);
-                        index++;
+                if (this.searchInput === ''){
+                    this.searchedArray = JSON.parse(JSON.stringify(this.jsonCopy));
+                }
+                else {
+                    for (let i = 0; i < this.json.length; i++) {
+                        let pattern = this.json[i].name.toLowerCase();
+                        if (pattern.includes(this.searchInput)) {
+                            this.searchedArray.splice(index, 0, this.json[i]);
+                            index++;
+                        }
                     }
                 }
-                return array;
+
+                this.$emit('search', this.searchedArray);
+                this.searchedArray = [];
             },
             selectSort (value) {
                 this.sortType = value;
@@ -66,6 +73,7 @@
                     this.sortedArray = this.shellSort('year', false);  
                 else this.sortedArray = JSON.parse(JSON.stringify(this.jsonCopy)); //?????????
                 this.$emit('sort', this.sortedArray);
+                
             },
             shellSort(param1, sign, param2) {
                 let array = JSON.parse(JSON.stringify(this.json));
