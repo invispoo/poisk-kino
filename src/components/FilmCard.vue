@@ -80,9 +80,8 @@
 			id (){
 				return this.$route.params.id;
 			},
-            film () {
-                let element = this.json.filter(element => element.id === parseInt(this.id));
-                return element[0];
+            film () { 
+                return this.json.find(film => film.id === +this.id);
             },
             movieLength () {
                 let length = this.film.movieLength;

@@ -1,83 +1,99 @@
 <template>
-    <div v-if="showSearch">
+    <div style="display: flex; flex-direction: column;">
         <a-input
         placeholder="Введите название фильма"
         size="large"
         v-model:value="searchInput"
-        @input="searchFilm"
+        @input="searchFilm()"
         style="width: 900px;"
         />
-    </div>
-    <div v-else>
-        <a-space>
-            <h2 style="padding-top: 6px;">Сортировка:</h2>
-            <a-select
-            style="width: 230px"
-            @change="selectSort"
-            >
-                <a-select-option value="best">Сначала с лучшей оценкой</a-select-option>
-                <a-select-option value="longest">Сначала длинные</a-select-option>
-                <a-select-option value="shortest">Сначала короткие</a-select-option>
-                <a-select-option value="newest">Сначала новые</a-select-option>
-                <a-select-option value="oldest">Сначала старые</a-select-option>
-                <a-select-option value="no">Отсутствует</a-select-option>
-            </a-select>
-        </a-space>
+        <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 40px">
+            <a-space>
+                <h3 style="padding-top:6px">Сортировка:</h3>
+                <a-select
+                style="width: 230px"
+                @change="selectSort"
+                >
+                    <a-select-option value="best">Сначала с лучшей оценкой</a-select-option>
+                    <a-select-option value="longest">Сначала длинные</a-select-option>
+                    <a-select-option value="shortest">Сначала короткие</a-select-option>
+                    <a-select-option value="newest">Сначала новые</a-select-option>
+                    <a-select-option value="oldest">Сначала старые</a-select-option>
+                    <a-select-option value="no">Отсутствует</a-select-option>
+                </a-select>
+            </a-space>
+        </div>
     </div>
 </template>
 
 <script>
     import jsonCopy from '../assets/kinopoisk.json'
+    const myJson = jsonCopy.docs;
     export default {
-        props: ['json', 'showSearch'],
+        emits: ['search', 'sort'],
         data () {
             return {
                 sortedArray: Array,
                 sortType: String,
+                sortFlag: false,
+                searchedArray: [],
                 searchInput: '',
-                jsonCopy: jsonCopy.docs,
                 searchFlag: false,
             }
         },
+        created (){
+            this.JSON_COPY = myJson;
+        },
         methods: {
             searchFilm () {
-                let index = 0;
-                let searchedArray = [];
                 if (this.searchInput === '') {
-                    searchedArray = JSON.parse(JSON.stringify(this.json));
+                    this.searchFlag = false;
+                    this.selectSort(this.sortType);
                 }
                 else {
-                    this.searchFlag = true;
-                    for (let i = 0; i < this.json.length; i++) {
-                        let pattern = this.json[i].name.toLowerCase();
-                        if (pattern.includes(this.searchInput)) {
-                            searchedArray.splice(index, 0, this.json[i]);
-                            index++;
-                        }
+                    if (this.sortFlag) {
+                        this.searchFlag = false;
+                        this.searchedArray = this.selectSort(this.sortType).filter(film => film.name
+                                            .toLowerCase().includes(this.searchInput.toLowerCase()));
                     }
+                    else 
+                        this.searchedArray = this.JSON_COPY.filter(film => film.name.toLowerCase()
+                                            .includes(this.searchInput.toLowerCase()));
+                    this.searchFlag = true;                
+                    this.$emit('search', this.searchedArray);
                 }
-                this.$emit('search', searchedArray, this.searchFlag); 
-                this.searchFlag = false;
+                return this.searchedArray;
             },
             selectSort (value) {
                 this.sortType = value;
                 if (this.sortType === 'best')
-                    this.sortedArray = this.shellSort('rating', true, 'kp');
+                    this.sortedArray = this.shellSort(true, 'rating',  'kp');
                 else if (this.sortType === 'longest')
-                    this.sortedArray = this.shellSort('movieLength', true);
+                    this.sortedArray = this.shellSort(true, 'movieLength');
                 else if (this.sortType === 'shortest')
-                    this.sortedArray = this.shellSort('movieLength', false);
+                    this.sortedArray = this.shellSort(false, 'movieLength');
                 else if (this.sortType === 'newest')
-                    this.sortedArray = this.shellSort('year', true);
+                    this.sortedArray = this.shellSort(true, 'year');
                 else if (this.sortType === 'oldest')
-                    this.sortedArray = this.shellSort('year', false);  
-                else this.sortedArray = JSON.parse(JSON.stringify(this.jsonCopy)); //?????????
-                this.$emit('sort', this.sortedArray);
-                
+                    this.sortedArray = this.shellSort( false, 'year');  
+                else {
+                    this.sortFlag = false;
+                    if (this.searchFlag)
+                        this.sortedArray = this.searchFilm();
+                    else 
+                        this.sortedArray = JSON.parse(JSON.stringify(this.JSON_COPY));
+                }
+                this.$emit('sort', this.sortedArray); 
+                return this.sortedArray;
             },
-            shellSort(param1, sign, param2) {
-                let array = JSON.parse(JSON.stringify(this.json));
-                var increment = array.length / 2;
+            shellSort (sign, param1, param2) {
+                let array;
+                this.sortFlag = true;
+                if (this.searchFlag) 
+                    array = this.searchedArray;
+                else 
+                    array = JSON.parse(JSON.stringify(this.JSON_COPY));
+                var increment = Math.floor(array.length / 2);
                 while (increment > 0) {
                     for (let i = increment; i < array.length; i++) {
                         var j = i;
