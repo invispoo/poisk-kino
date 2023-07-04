@@ -1,23 +1,20 @@
 <template>
     <div>
-        <!--Здесь нужна фиксированная ширина или обычные флекс боксы-->
-        <a-row style="display: flex; align-items: center; justify-content: space-between; align-items: start; margin-top: 50px;">
+        <a-row style="display: flex; align-items: center; justify-content: space-between; align-items: start;">
             <a-col>
-                <h1>Поиск кино</h1>
+                <p style="font-size: 3.2em;">Поиск кино</p>
             </a-col>
-            <a-col style="margin-top: 10px;">
+            <a-col style="margin-top: 20px;">
                 <film-filter 
                 @search="filmArray = $event"
                 @sort="filmArray = $event"
                 />
             </a-col>
         </a-row>
-        <div >
-        </div>
-        <div style="height: 770px; padding-top: 10px;">
+
+        <div style="padding: 15px 0; text-align: center; margin: 0 auto">
             <a-row :gutter="[24, 24]">
-                <a-col :span="6" 
-                v-for="el in filmArray">
+                <a-col :span="4" v-for="el in filmArray">
                     <router-link :to="'/film/' + index">
                         <film-card @id="index = $event" :element="el" :shortcutView="true"/>
                     </router-link>
@@ -34,6 +31,7 @@
     import json from '../assets/kinopoisk.json'
     import FilmCard from './FilmCard.vue'
     import FilmFilter from './FilmFilter.vue'
+    
     export default {
         components: {
             FilmCard, FilmFilter
@@ -42,7 +40,7 @@
             this.filmArray = json.docs;
         },
         computed: {
-
+            
         },
         data() {
             return {
@@ -52,7 +50,7 @@
             }
         },
         methods: {
-    
+            
         } 
     }
 </script>

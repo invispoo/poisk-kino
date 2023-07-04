@@ -12,6 +12,7 @@
             </a-card-meta>
         </a-card>
     </div>
+
     <div v-else>
         <a-row type="flex" justify="start" :gutter="48">
             <a-col :span="8">
@@ -20,7 +21,7 @@
             <a-col :span="16" style="text-align:left">
                 <span style="display: flex; align-items: start; justify-content: space-between;">
                     <h1>{{ film.name }}</h1>
-                    <a-button type="link" size="large" @click="isAddedToTabs = !isAddedToTabs">
+                    <a-button type="link" size="large" @click="manageTab(id)">
                         <template #icon>
                             <icon>
                                 <template #component>
@@ -48,8 +49,11 @@
                     <h2>{{ movieLength }}</h2>
                 </a-space>
                 <h3>{{ film.description }}</h3>
-                <h2>Оценить
-                    <a-rate allow-half/>
+                <h2>Оценить {{ value }}
+                    <a-rate allow-half
+                    v-model:value="value"
+                    :allow-clear="false"
+                    @click="setRate(id, value)"/>
                 </h2>
             </a-col>
             <a-col :span="4">
@@ -62,6 +66,9 @@
 <script>
     import json from '../assets/kinopoisk.json'
     import Icon from '@ant-design/icons-vue';
+    import { useRateStore } from '../store/rates.js'
+    import { useTabStore } from '../store/tabs.js'
+    import { mapState, mapActions } from 'pinia'
     export default {
         components: {
             Icon
@@ -71,12 +78,15 @@
         data () {
             return {
                 color: '#464455',
-                isAddedToTabs: false,
                 json: json.docs,
                 index: null,
+                value: 0,
+                //isAddedToTabs: false
             }
         },
         computed: {
+            ...mapState(useTabStore, ['tabsList']),
+            ...mapState(useRateStore, ['ratesList']),
 			id (){
 				return this.$route.params.id;
 			},
@@ -105,9 +115,15 @@
                 else if (rating.imdb === 0 && rating.kp !== 0)
                     return rating.kp;
             },
+            isAddedToTabs () {
+                if (this.tabsList.find(film => +film.id === +this.id))
+                return true;
+                else return false;
+            }
         },
         methods: {
-            
+            ...mapActions(useRateStore, ['setRate']),
+            ...mapActions(useTabStore, ['manageTab']),
         }
     }
 </script>

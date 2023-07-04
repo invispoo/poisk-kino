@@ -1,6 +1,8 @@
 import { createWebHistory, createRouter } from "vue-router";
 import MainPage from "./components/MainPage.vue";
 import FilmCard from "./components/FilmCard.vue";
+import Rates from './components/Rates.vue';
+import Tabs from './components/Tabs.vue';
 
 const routes = [
     {
@@ -13,9 +15,17 @@ const routes = [
         redirect: {name: 'main'}
     },
     {
-		path: '/film/:id',
-		component: FilmCard
-	},
+      path: '/film/:id',
+      component: FilmCard
+    },
+    {
+      path: '/rates',
+      component: Rates
+    },
+    {
+      path: '/tabs',
+      component: Tabs
+    },
 ]
 
 const router = createRouter({
