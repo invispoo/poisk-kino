@@ -7,14 +7,14 @@ export const useRateStore = defineStore('rates', {
         }
     },
     actions: {
-      setRate(id, rate) {
-        if (!this.ratesList.find(film => film.id === id)){
-          this.ratesList.push({
+      setRate (id, rate) {
+        let ratedFilm = this.ratesList.find(film => film.id === id);
+        ratedFilm ? ratedFilm.rate = rate : 
+        this.ratesList.push({
             id: id,
             rate: rate
           });
-        }
         console.log(this.ratesList)
-      }
+      },
     }
 })

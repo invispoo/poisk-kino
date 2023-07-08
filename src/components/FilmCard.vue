@@ -49,11 +49,11 @@
                     <h2>{{ movieLength }}</h2>
                 </a-space>
                 <h3>{{ film.description }}</h3>
-                <h2>Оценить {{ value }}
+                <h2>Оценить {{ userRate }}
                     <a-rate allow-half
-                    v-model:value="value"
+                    v-model:value="userRate"
                     :allow-clear="false"
-                    @click="setRate(id, value)"/>
+                    @click="setRate(id, userRate)"/>
                 </h2>
             </a-col>
             <a-col :span="4">
@@ -74,14 +74,17 @@
             Icon
         },
         props: ['element', 'shortcutView'],
-
+        created () {
+            let ratedFilm = this.ratesList.find(film => +film.id === +this.id);
+            if (ratedFilm) 
+                this.userRate = ratedFilm.rate;
+        },
         data () {
             return {
                 color: '#464455',
                 json: json.docs,
                 index: null,
-                value: 0,
-                //isAddedToTabs: false
+                userRate: 0,
             }
         },
         computed: {
@@ -116,10 +119,8 @@
                     return rating.kp;
             },
             isAddedToTabs () {
-                if (this.tabsList.find(film => +film.id === +this.id))
-                return true;
-                else return false;
-            }
+                return this.tabsList.find(film => +film.id === +this.id) ? true : false;
+            },
         },
         methods: {
             ...mapActions(useRateStore, ['setRate']),
