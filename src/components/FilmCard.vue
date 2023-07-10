@@ -21,7 +21,7 @@
             <a-col :span="16" style="text-align:left">
                 <span style="display: flex; align-items: start; justify-content: space-between;">
                     <h1>{{ film.name }}</h1>
-                    <a-button type="link" size="large" @click="manageTab(id)">
+                    <a-button type="link" size="large" @click="manageTab(film)">
                         <template #icon>
                             <icon>
                                 <template #component>

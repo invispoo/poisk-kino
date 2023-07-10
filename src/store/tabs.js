@@ -7,15 +7,12 @@ export const useTabStore = defineStore('tabs', {
         }
     },
     actions: {
-      manageTab(id) {
-        let tabFlag = this.tabsList.find(film => film.id === id);
+      manageTab(film) {
+        let tabFlag = this.tabsList.indexOf(film) !== -1;
         if (tabFlag)
-            this.tabsList.splice(this.tabsList.indexOf(tabFlag));
+            this.tabsList.splice(this.tabsList.indexOf(film));
         else
-            this.tabsList.push({
-                id: id
-            })
-        console.log(this.tabsList)
+            this.tabsList.push(film)
       }
     }
 })

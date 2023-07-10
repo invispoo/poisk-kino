@@ -7,17 +7,7 @@
             v-model:value="searchInput"
             @input="searchFilm()"
             style="width: 700px;"
-            />
-            <router-link :to="'/tabs'">
-                <svg fill="#464455" width="35px" height="35px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#464455" stroke-width="40" style="padding-top:4px;">
-                    <!--<path d="m960.481 1412.11 511.758 307.054V170.586c0-31.274-25.588-56.862-56.862-56.862H505.586c-31.274 0-56.862 25.588-56.862 56.862v1548.578l511.757-307.055ZM1585.963 1920 960.48 1544.711 335 1920V170.586C335 76.536 411.536 0 505.586 0h909.79c94.05 0 170.587 76.536 170.587 170.586V1920Z"/>-->
-                    <path d="M1585.963 1920 960.48 1544.711 335 1920V170.586C335 76.536 411.536 0 505.586 0h909.79c94.05 0 170.587 76.536 170.587 170.586V1920Z"/>
-                </svg>
-            </router-link>
-            <router-link :to="'/rates'">
-                <LikeOutlined style="font-size: 32px; color:#464455"/>  
-            </router-link>
-                        
+            />     
         </a-space>
         <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 40px">
             <a-space>
@@ -39,14 +29,12 @@
 </template>
 
 <script>
-    import jsonCopy from '../assets/kinopoisk.json'
     import Icon, { LikeOutlined } from '@ant-design/icons-vue';
-    import Rates from './Rates.vue';
-    const myJson = jsonCopy.docs;
     export default {
         components: {
-            Icon, LikeOutlined, Rates
+            Icon, LikeOutlined,
         },
+        props: ['json'],
         emits: ['search', 'sort'],
         data () {
             return {
@@ -59,7 +47,6 @@
             }
         },
         created (){
-            this.JSON_COPY = myJson;
         },
         methods: {
             searchFilm () {
@@ -74,7 +61,7 @@
                                             .toLowerCase().includes(this.searchInput.toLowerCase()));
                     }
                     else 
-                        this.searchedArray = this.JSON_COPY.filter(film => film.name.toLowerCase()
+                        this.searchedArray = this.json.filter(film => film.name.toLowerCase()
                                             .includes(this.searchInput.toLowerCase()));
                     this.searchFlag = true;                
                     this.$emit('search', this.searchedArray);
@@ -98,7 +85,7 @@
                     if (this.searchFlag)
                         this.sortedArray = this.searchFilm();
                     else 
-                        this.sortedArray = JSON.parse(JSON.stringify(this.JSON_COPY));
+                        this.sortedArray = JSON.parse(JSON.stringify(this.json));
                 }
                 this.$emit('sort', this.sortedArray); 
                 return this.sortedArray;
@@ -109,7 +96,7 @@
                 if (this.searchFlag) 
                     array = this.searchedArray;
                 else 
-                    array = JSON.parse(JSON.stringify(this.JSON_COPY));
+                    array = JSON.parse(JSON.stringify(this.json));
                 var increment = Math.floor(array.length / 2);
                 while (increment > 0) {
                     for (let i = increment; i < array.length; i++) {

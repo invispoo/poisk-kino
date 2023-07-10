@@ -14,7 +14,6 @@ export const useRateStore = defineStore('rates', {
             id: id,
             rate: rate
           });
-        console.log(this.ratesList)
       },
     }
 })
