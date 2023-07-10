@@ -5,14 +5,14 @@
                  :json="rateArray"/>
     <div style="padding: 15px 0; text-align: center; margin: 0 auto">
             <a-row :gutter="[24, 24]">
-                <a-col :span="4" v-for="(el, ind) in filmArray">
+                <a-col :span="4" v-for="(el, ind) in filmArray.slice(start, end)">
                     <router-link :to="'/film/' + index">
                         <film-card @id="index = $event" :element="el" :shortcutView="true"/>
                     </router-link>
                 </a-col>
             </a-row>
             <div style="padding-top: 30px; padding-bottom: 30px;">
-                <a-pagination :total="40"/>
+                <pagination :filmArray="filmArray" @page="onPage"/>
             </div>
         </div> 
 </template>
@@ -23,10 +23,11 @@
     import FilmCard from './FilmCard.vue'
     import json from '../assets/kinopoisk.json'
     import FilmFilter from './FilmFilter.vue'
+    import Pagination from './Pagination.vue';
 
     export default {
         components: {
-            FilmCard, FilmFilter
+            FilmCard, FilmFilter, Pagination
         },
         computed: {
             ...mapState(useRateStore, ['ratesList']),
@@ -45,11 +46,14 @@
                 index: Number,
                 filmArray: Array,
                 rateArray: [],
+                start: Number,
+                end: Number
             }
         },
         methods: {
-            ratedFilm (index) {
-                return this.myjson.find(film => film.id === +this.ratesList[index].id);
+            onPage (start, end) {
+                this.start = start;
+                this.end = end;
             }
         },
     }

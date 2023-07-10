@@ -63,7 +63,7 @@
                     else 
                         this.searchedArray = this.json.filter(film => film.name.toLowerCase()
                                             .includes(this.searchInput.toLowerCase()));
-                    this.searchFlag = true;                
+                    this.searchFlag = true;               
                     this.$emit('search', this.searchedArray);
                 }
                 return this.searchedArray;

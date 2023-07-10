@@ -26,15 +26,14 @@
 
         <div style="padding: 15px 0; text-align: center; margin: 0 auto">
             <a-row :gutter="[24, 24]">
-                <a-col :span="4" v-for="el in filmArray">
+                <a-col :span="4" v-for="el in filmArray.slice(start, end)">
                     <router-link :to="'/film/' + index">
                         <film-card @id="index = $event" :element="el" :shortcutView="true"/>
                     </router-link>
                 </a-col>
             </a-row>
             <div style="padding-top: 30px; padding-bottom: 30px;">
-                <a-pagination v-model:current="current" :total="40"/>
-                {{ current }}
+               <pagination :filmArray="filmArray" @page="onPage"/>
             </div>
         </div> 
     </div>
@@ -42,30 +41,32 @@
 
 <script>
     import Icon, { LikeOutlined } from '@ant-design/icons-vue';
-    import json from '../assets/kinopoisk.json'
-    import FilmCard from './FilmCard.vue'
-    import FilmFilter from './FilmFilter.vue'
+    import json from '../assets/kinopoisk.json';
+    import FilmCard from './FilmCard.vue';
+    import FilmFilter from './FilmFilter.vue';
+    import Pagination from './Pagination.vue';
     
     export default {
         components: {
-            FilmCard, FilmFilter, Icon, LikeOutlined
+            FilmCard, FilmFilter, Icon, LikeOutlined, Pagination
         },
         created() {
             this.filmArray = json.docs;
-        },
-        computed: {
-            
         },
         data() {
             return {
                 json: json.docs,
                 index: Number,
                 filmArray: Array,
-                current: 1
+                start: Number,
+                end: Number,
             }
         },
         methods: {
-            
+            onPage (start, end) {
+                this.start = start;
+                this.end = end;
+            }
         } 
     }
 </script>
