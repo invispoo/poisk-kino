@@ -14,5 +14,6 @@ export const useTabStore = defineStore('tabs', {
         else
             this.tabsList.push(film)
       }
-    }
+    },
+    persist: true,
 })

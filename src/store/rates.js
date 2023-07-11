@@ -15,5 +15,6 @@ export const useRateStore = defineStore('rates', {
             rate: rate
           });
       },
-    }
+    },
+    persist: true,
 })

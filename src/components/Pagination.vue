@@ -1,5 +1,6 @@
 <template>
-     <a-pagination v-if="filmArray.length > 25"
+     <a-pagination style="text-align: center;"
+     v-if="filmArray.length > 25"
      v-model:current="current" 
      @change="onPageChange" 
      :total="pageAmount"/>

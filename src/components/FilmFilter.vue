@@ -1,38 +1,39 @@
 <template>
     <div style="display: flex; flex-direction: column;">
-        <a-space>
-            <a-input
-            placeholder="Введите название фильма"
-            size="large"
-            v-model:value="searchInput"
-            @input="searchFilm()"
-            style="width: 700px;"
-            />     
-        </a-space>
-        <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-top: 40px">
-            <a-space>
-                <h3 style="padding-top:6px">Сортировка:</h3>
+        <a-input
+        placeholder="Введите название фильма"
+        size="large"
+        v-model:value="searchInput"
+        @input="searchFilm()"
+        style="width: 1200px;">
+            <template #addonAfter>
+                <setting-outlined 
+                @click="isSortShowed = !isSortShowed" 
+                v-if="!isSortShowed" 
+                style="font-size: 16px;"/>
                 <a-select
-                style="width: 230px"
+                style="width: 230px;"
                 @change="selectSort"
+                v-if="isSortShowed"
+                placeholder="Выберите вид сортировки"
+                allow-clear
                 >
                     <a-select-option value="best">Сначала с лучшей оценкой</a-select-option>
                     <a-select-option value="longest">Сначала длинные</a-select-option>
                     <a-select-option value="shortest">Сначала короткие</a-select-option>
                     <a-select-option value="newest">Сначала новые</a-select-option>
                     <a-select-option value="oldest">Сначала старые</a-select-option>
-                    <a-select-option value="no">Отсутствует</a-select-option>
                 </a-select>
-            </a-space>
-        </div>
+            </template>
+        </a-input>     
     </div>
 </template>
 
 <script>
-    import Icon, { LikeOutlined } from '@ant-design/icons-vue';
+    import Icon, { LikeOutlined, SettingOutlined } from '@ant-design/icons-vue';
     export default {
         components: {
-            Icon, LikeOutlined,
+            Icon, LikeOutlined, SettingOutlined
         },
         props: ['json'],
         emits: ['search', 'sort'],
@@ -44,6 +45,7 @@
                 searchedArray: [],
                 searchInput: '',
                 searchFlag: false,
+                isSortShowed: false,
             }
         },
         created (){

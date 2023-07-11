@@ -6,25 +6,25 @@ import Tabs from './components/Tabs.vue';
 
 const routes = [
     {
-        name: 'main',
-        path: '/main',
+        name: 'find-film',
+        path: '/find-film',
         component: MainPage,
     },
     {
         path: '',
-        redirect: {name: 'main'}
+        redirect: {name: 'find-film'}
     },
     {
-      path: '/film/:id',
+      path: '/find-film/:id',
       component: FilmCard
     },
     {
-      path: '/rates',
-      component: Rates
+      path: '/find-film/tabs',
+      component: Tabs
     },
     {
-      path: '/tabs',
-      component: Tabs
+      path: '/find-film/rates',
+      component: Rates
     },
 ]
 

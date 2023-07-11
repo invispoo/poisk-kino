@@ -1,66 +1,73 @@
 <template>
-    <div v-if="shortcutView" @click="$emit('id', element.id)">
-        <a-card hoverable :title="element.name">
-            <template #cover>
-                <img alt="example" :src="element.poster.url" />
-            </template>
-            <a-card-meta>
-                <template #description>{{element.shortDescription}}
-                    <p>{{ element.rating.kp }}</p>
-                    <h3>{{ element.movieLength }}</h3>
+    <div>
+        <div v-if="shortcutView" @click="$emit('id', element.id)">
+            <a-card hoverable class="film-card">
+                <template #cover>
+                    <img alt="example" :src="element.poster.url" height="385"/>
                 </template>
-            </a-card-meta>
-        </a-card>
-    </div>
+                <a-card-meta>
+                    <template #description>
+                        <h2 style="color:black !important;">
+                            <span v-if="element.name.length > 29">
+                                {{ shortenedName }}
+                            </span>
+                            <span v-else>
+                                {{ element.name }}
+                            </span>
+                        </h2>
+                        <a-space :size="5" style="display: flex; align-items: start;">
+                            <StarOutlined style="font-size: 12px"/>
+                            <h4 style="color:#757575;">
+                                {{ element.rating.kp }}
+                            </h4>
+                        </a-space>
+                    </template>
+                </a-card-meta>
+            </a-card>
+        </div>
 
-    <div v-else>
-        <a-row type="flex" justify="start" :gutter="48">
-            <a-col :span="8">
-                <img alt="example" :src="film.poster.url" height="600"/>   
-            </a-col>
-            <a-col :span="16" style="text-align:left">
-                <span style="display: flex; align-items: start; justify-content: space-between;">
-                    <h1>{{ film.name }}</h1>
-                    <a-button type="link" size="large" @click="manageTab(film)">
-                        <template #icon>
-                            <icon>
-                                <template #component>
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="padding-top: 6px;">
-                                        <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
-                                        stroke="#464455"
-                                        v-if="!isAddedToTabs"
-                                        fill="none"
-                                        />
-                                        <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
-                                        stroke="#464455"
-                                        v-if="isAddedToTabs"
-                                        :fill="color"
-                                        />
-                                    </svg>
-                                </template>
-                            </icon>
-                        </template>
-                    </a-button>
-                </span>
-                <i><h2>{{ alternativeName }}</h2></i>
-                <a-space>
-                    <h2>{{ rating }}</h2>
-                    <h2>{{ film.year }}</h2>
-                    <h2>{{ movieLength }}</h2>
-                </a-space>
-                <h3>{{ film.description }}</h3>
-                <h2>Оценить {{ userRate }}
-                    <a-rate allow-half
-                    v-model:value="userRate"
-                    :allow-clear="false"
-                    @click="setRate(id, userRate)"/>
-                </h2>
-            </a-col>
-            <a-col :span="4">
-            </a-col>
-        </a-row>
+        <div v-else class="film-page">
+            <a-row type="flex" justify="center" :gutter="40" style="padding: 100px 200px">
+                <a-col :span="8">
+                    <img alt="example" :src="film.poster.url" height="600"/>   
+                </a-col>
+                <a-col :span="12">
+                    <span class="film-title">
+                        <h1>{{ film.name }}</h1>
+                        <svg @click="manageTab(film)"
+                        width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
+                            :stroke="iconColor"
+                            v-if="!isAddedToTabs"
+                            fill="none"
+                            />
+                            <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
+                            :stroke="iconColor"
+                            v-if="isAddedToTabs"
+                            :fill="iconColor"
+                            />
+                        </svg>
+                    </span>
+                    <i><h2>{{ alternativeName }}</h2></i>
+                    <a-space :size="10">
+                        <h2>{{ film.rating.kp }}</h2>
+                        <h2>{{ film.year }}</h2>
+                        <h2>{{ movieLength }}</h2>
+                    </a-space>
+                    <h3 class="film-description">{{ film.description }}</h3>
+                    <span class="film-rate">
+                        <h2>Оценить
+                            <a-rate allow-half
+                            v-model:value="userRate"
+                            :allow-clear="false"
+                            @click="setRate(id, userRate)" 
+                            style="padding: 0 5px"/>
+                        </h2>
+                    </span>
+                </a-col>
+            </a-row>
+        </div>
     </div>
-    
 </template>
 
 <script>
@@ -69,9 +76,11 @@
     import { useRateStore } from '../store/rates.js'
     import { useTabStore } from '../store/tabs.js'
     import { mapState, mapActions } from 'pinia'
+    import { StarOutlined } from '@ant-design/icons-vue'
+
     export default {
         components: {
-            Icon
+            Icon, StarOutlined
         },
         props: ['element', 'shortcutView'],
         created () {
@@ -81,7 +90,7 @@
         },
         data () {
             return {
-                color: '#464455',
+                iconColor: '#FFFFFF',
                 json: json.docs,
                 index: null,
                 userRate: 0,
@@ -109,18 +118,14 @@
             },
             alternativeName () {
                 if (this.film.alternativeName !== null)
-                    return '"' + this.film.alternativeName + '"'; //интерполяция??
-            },
-            rating () {
-                let rating = this.film.rating;
-                if (rating.imdb !== 0)
-                    return rating.imdb;
-                else if (rating.imdb === 0 && rating.kp !== 0)
-                    return rating.kp;
+                    return `"${this.film.alternativeName}"`;
             },
             isAddedToTabs () {
                 return this.tabsList.find(film => +film.id === +this.id) ? true : false;
             },
+            shortenedName () {
+                return +this.element.id === 1387021 ? `${this.element.name.slice(0, 19)}...` : `${this.element.name.slice(0, 29)}...`;
+            }
         },
         methods: {
             ...mapActions(useRateStore, ['setRate']),
@@ -129,5 +134,41 @@
     }
 </script>
 
-<style scoped>
+<style>
+
+    h1, h2, h3 {
+        color: white !important;
+    }
+
+    .film-card {
+        height: 530px;
+        border-radius: 10%;
+    }
+
+    .film-page {
+        color: white;
+        height: 900px;
+        overflow: hidden;
+    }
+
+    .film-title {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+    }
+    
+    .film-description {
+        text-align: justify; 
+        line-height: 2.1;
+        font-size: 17px;
+        font-weight: 500;
+        margin-top: 20px;
+    }
+
+    .film-rate {
+        display: flex;
+        align-items: start;
+        margin-top: 30px;
+    }
+    
 </style>

@@ -1,13 +1,16 @@
 <template>
-  <div style="margin: 30px 50px;">
+  <!-- style="margin: 30px 50px;"-->
+  <div class="app">
     <router-view></router-view>
   </div>
 </template>
 
-<script>
-  
-</script>
-
 <style scoped>
-
+  .app {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+	  border: none;
+    background: #424242; 
+  }
 </style>
