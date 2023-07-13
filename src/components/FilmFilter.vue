@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; flex-direction: column;">
+    <div class="filter-container">
         <a-input
         placeholder="Введите название фильма"
         size="large"
@@ -12,11 +12,11 @@
                 v-if="!isSortShowed" 
                 style="font-size: 16px;"/>
                 <a-select
-                style="width: 230px;"
                 @change="selectSort"
                 v-if="isSortShowed"
                 placeholder="Выберите вид сортировки"
                 allow-clear
+                style="width: 230px;"
                 >
                     <a-select-option value="best">Сначала с лучшей оценкой</a-select-option>
                     <a-select-option value="longest">Сначала длинные</a-select-option>
@@ -30,10 +30,10 @@
 </template>
 
 <script>
-    import Icon, { LikeOutlined, SettingOutlined } from '@ant-design/icons-vue';
+    import { SettingOutlined } from '@ant-design/icons-vue';
     export default {
         components: {
-            Icon, LikeOutlined, SettingOutlined
+            SettingOutlined
         },
         props: ['json'],
         emits: ['search', 'sort'],
@@ -134,3 +134,10 @@
         } 
     }
 </script>
+
+<style>
+    .filter-container {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

@@ -7,18 +7,21 @@
                 </template>
                 <a-card-meta>
                     <template #description>
-                        <h2 style="color:black !important;">
-                            <span v-if="element.name.length > 29">
-                                {{ shortenedName }}
-                            </span>
-                            <span v-else>
-                                {{ element.name }}
-                            </span>
-                        </h2>
+                            <h2 style="color:black !important;">
+                                <a-tooltip v-if="element.name.length > 29" :title="element.name" placement="bottomLeft" color="#757575">
+                                    <span>
+                                        {{ shortenedName }}
+                                    </span>
+                                </a-tooltip>
+                                <span v-else>
+                                    {{ element.name }}
+                                </span>
+                                
+                            </h2>
                         <a-space :size="5" style="display: flex; align-items: start;">
                             <StarOutlined style="font-size: 12px"/>
                             <h4 style="color:#757575;">
-                                {{ element.rating.kp }}
+                                {{ element.rating.kp.toFixed(2) }}
                             </h4>
                         </a-space>
                     </template>
@@ -50,7 +53,7 @@
                     </span>
                     <i><h2>{{ alternativeName }}</h2></i>
                     <a-space :size="10">
-                        <h2>{{ film.rating.kp }}</h2>
+                        <h2>{{ film.rating.kp.toFixed(2) }}</h2>
                         <h2>{{ film.year }}</h2>
                         <h2>{{ movieLength }}</h2>
                     </a-space>
@@ -147,7 +150,7 @@
 
     .film-page {
         color: white;
-        height: 900px;
+        min-height: 900px;
         overflow: hidden;
     }
 

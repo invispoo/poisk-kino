@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
   .app {
     box-sizing: border-box;
     padding: 0;
