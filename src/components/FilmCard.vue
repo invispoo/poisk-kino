@@ -30,7 +30,10 @@
         </div>
 
         <div v-else class="film-page">
-            <a-row type="flex" justify="center" :gutter="40" style="padding: 100px 200px">
+            <router-link :to="'/find-film'">
+                <arrow-left-outlined class="arrow-button" style="color: white;"/>
+            </router-link>
+            <a-row type="flex" justify="center" :gutter="40" style="padding: 60px 200px 80px">
                 <a-col :span="8">
                     <img alt="example" :src="film.poster.url" height="600"/>   
                 </a-col>
@@ -69,21 +72,30 @@
                     </span>
                 </a-col>
             </a-row>
+            <div v-if="regFlag" :style="recommendationPadding">
+                <h1 style="padding-bottom: 30px;">Рекомендуем посмотреть</h1>
+                <a-row :gutter="recommendationGutter">
+                    <a-col :span="recommendationSpan" v-for="el in regMatch">
+                        <router-link :to="'/find-film/' + index">
+                            <film-card @id="index = $event" :element="el" :shortcutView="true"/>
+                        </router-link>
+                    </a-col>
+                </a-row>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
     import json from '../assets/kinopoisk.json'
-    import Icon from '@ant-design/icons-vue';
     import { useRateStore } from '../store/rates.js'
     import { useTabStore } from '../store/tabs.js'
     import { mapState, mapActions } from 'pinia'
-    import { StarOutlined } from '@ant-design/icons-vue'
+    import Icon, { StarOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue'
 
     export default {
         components: {
-            Icon, StarOutlined
+            Icon, StarOutlined, ArrowLeftOutlined
         },
         props: ['element', 'shortcutView'],
         created () {
@@ -91,12 +103,14 @@
             if (ratedFilm) 
                 this.userRate = ratedFilm.rate;
         },
+
         data () {
             return {
                 iconColor: '#FFFFFF',
                 json: json.docs,
                 index: null,
                 userRate: 0,
+                regFlag: true
             }
         },
         computed: {
@@ -128,11 +142,68 @@
             },
             shortenedName () {
                 return +this.element.id === 1387021 ? `${this.element.name.slice(0, 19)}...` : `${this.element.name.slice(0, 29)}...`;
-            }
+            },
+            recommendationPadding () {
+                return this.regMatch.length < 5 ? 'padding: 0 325px 100px;' : 'padding: 0 130px 100px;';
+            },
+            recommendationGutter () {
+                return this.regMatch.length < 5 ? 65 : [40, 40];
+            },
+            recommendationSpan () {
+                return this.regMatch.length < 5 ? 6 : 4;
+            },
+            regMatch () {
+                let matchingFilms = [];
+                this.regFlag = false;
+                let reg = /[А-Я][а-яё]*((?=:|$|\s\d)|\s[А-Я][а-яё]*)|[Бб]оевик|[Дд]рам|[Дд]етектив|[Мм]ульт|[Аа]нимац|[Фф]антаст|[Сс]ериал|Marvel/g;
+                let filmMatch = [];
+                let nameMatch = this.film.name.match(reg);
+                let descriptionMatch = this.film.description.match(reg);
+                if (this.film.shortDescription) {
+                    let shortMatch = this.film.shortDescription.match(reg);
+                    if (shortMatch)
+                        filmMatch = filmMatch.concat(shortMatch);
+                }
+                if (nameMatch)
+                    filmMatch = filmMatch.concat(nameMatch);
+                if (descriptionMatch)
+                    filmMatch = filmMatch.concat(descriptionMatch);
+                for (let i = 0; i < this.json.length; i++) {
+                    let jsonMatch = [];
+                    let nameJsonMatch = this.json[i].name.match(reg);
+                    let descriptionJsonMatch = this.json[i].description.match(reg);
+                    if (this.json[i].shortDescription) {
+                        let shortJsonMatch = this.json[i].shortDescription.match(reg);
+                        if (shortJsonMatch)
+                            jsonMatch = jsonMatch.concat(shortJsonMatch);
+                    }
+                    if (nameJsonMatch)
+                        jsonMatch = jsonMatch.concat(nameJsonMatch);
+                    if (descriptionJsonMatch)
+                        jsonMatch = jsonMatch.concat(descriptionJsonMatch);
+                    if (jsonMatch && filmMatch) {
+                        for (let j = 0; j < jsonMatch.length; j++) {
+                            jsonMatch[j] = jsonMatch[j].replace(":", "");
+                            for (let k = 0; k < filmMatch.length; k++) {
+                                filmMatch[k] = filmMatch[k].replace(":", "");
+                                if (jsonMatch[j] === filmMatch[k] && this.film.id !== this.json[i].id && matchingFilms.indexOf(this.json[i]) === -1) {
+                                    matchingFilms.push(this.json[i]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                //console.log(array) 
+                if (matchingFilms.length > 0) 
+                    this.regFlag = true;               
+                return matchingFilms;
+            },
         },
         methods: {
             ...mapActions(useRateStore, ['setRate']),
             ...mapActions(useTabStore, ['manageTab']),
+
         }
     }
 </script>
@@ -172,6 +243,11 @@
         display: flex;
         align-items: start;
         margin-top: 30px;
+    }
+
+    .arrow-button {
+        font-size: 40px; 
+        padding: 40px 0 0 40px;
     }
     
 </style>

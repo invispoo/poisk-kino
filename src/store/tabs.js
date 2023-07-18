@@ -8,12 +8,11 @@ export const useTabStore = defineStore('tabs', {
     },
     actions: {
       manageTab(film) {
-        let tabFlag = this.tabsList.indexOf(film) !== -1; //фильм уже есть в закладках
-        if (tabFlag)
-            this.tabsList.splice(this.tabsList.indexOf(film), 1);
+        let tabFlag = this.tabsList.find(tab => +tab.id === +film.id); //фильм уже есть в закладках
+        if (!tabFlag)
+          this.tabsList.push(film);
         else
-            this.tabsList.push(film);
-        console.log(this.tabsList);
+          this.tabsList.splice(this.tabsList.indexOf(film), 1);  
       }
     },
     persist: true,

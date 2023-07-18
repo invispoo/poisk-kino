@@ -48,7 +48,6 @@
             </template>
         </toolbar>
 
-
         <div class="card-view">
             <div>
                 <u style="color:white">
