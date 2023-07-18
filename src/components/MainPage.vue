@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <!--Главная страница-->
         <toolbar v-if="isHomeShowed">
             <template #filter>
                 <film-filter 
@@ -17,6 +18,7 @@
             </template>
         </toolbar>
 
+        <!--Страница с закладками-->
         <toolbar v-if="isTabsShowed">
             <template #filter>
                 <film-filter 
@@ -31,12 +33,13 @@
             </template>
         </toolbar>
 
+        <!--Страница с оценками-->
         <toolbar v-if="isRatesShowed">
             <template #filter>
                 <film-filter 
                 @search="filmArray = $event"
                 @sort="filmArray = $event"
-                :json="rateArray"
+                :json="ratedJson"
                 />
             </template>
             <template #buttons>
@@ -48,6 +51,7 @@
             </template>
         </toolbar>
 
+        <!--Отображение карточек фильмов-->
         <div class="card-view">
             <div>
                 <u style="color:white">
@@ -99,6 +103,7 @@
             FilmCard, FilmFilter, Pagination, Toolbar, LikeOutlined, HomeOutlined, 
         },
         created() {
+            //Для возврата на последний вид главной страницы после просмотра расширенной карточки фильма
             if (this.isHomeShowed)
                 this.switchToHome();
             else if (this.isTabsShowed)
@@ -120,15 +125,16 @@
         data () {
             return {
                 json: json.docs,
-                index: Number,
-                filmArray: Array,
-                rateArray: Array,
-                start: Number,
-                end: Number,
+                index: Number, //id фильма для перехода по страницам
+                filmArray: Array, //массив фильмов, отображаемый на странице в данный момент
+                ratedJson: Array, //массив элементов исходной базы данных, которым пользователь поставил оценку
+                start: Number, //начальный индекс выводимого массива для пагинации
+                end: Number, //конечный индекс выводимого массива для пагинации
             }
         },
         methods: {
             ...mapActions(usePageStore, ['goToHome', 'goToTabs', 'goToRates']),
+            //При смене страницы обновляются начальные и конечные индексы выводимого массива
             onPage (start, end) {
                 this.start = start;
                 this.end = end;
@@ -141,14 +147,15 @@
                 this.filmArray = this.tabsList;
                 this.goToTabs();
             },
+            //Создание и заполнение массива оцененных пользователем фильмов элементами из исходной БД
             switchToRates () {
-                this.rateArray = [];
+                this.ratedJson = [];
                 for (let i = 0; i < this.ratesList.length; i++) {
                     let ratedFilm = this.json.find(film => +film.id === +this.ratesList[i].id);
-                    if (this.rateArray.indexOf(ratedFilm) === -1)
-                        this.rateArray.push(ratedFilm);
+                    if (this.ratedJson.indexOf(ratedFilm) === -1)
+                        this.ratedJson.push(ratedFilm);
                 }
-                this.filmArray = this.rateArray;
+                this.filmArray = this.ratedJson;
                 this.goToRates();
             },
         } 

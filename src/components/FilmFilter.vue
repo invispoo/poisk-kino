@@ -39,37 +39,39 @@
         emits: ['search', 'sort'],
         data () {
             return {
-                sortedArray: Array,
-                sortType: String,
-                sortFlag: false,
-                searchedArray: [],
-                searchInput: '',
-                searchFlag: false,
-                isSortShowed: false,
+                sortedArray: Array, //отсортированный массив
+                sortType: String, //вид сортировка
+                isSorted: false, //флаг сортировки
+                searchedArray: [], //массив результата поиска
+                searchInput: '', //текст поискового запроса
+                isSearched: false, //флаг поиска
+                isSortShowed: false, //видимость селектора сортировки
             }
         },
         created (){
         },
         methods: {
+            //Осуществляет поиск в отсортированном массиве, если сортировка присутствует, иначе в исходном
             searchFilm () {
                 if (this.searchInput === '') {
-                    this.searchFlag = false;
+                    this.isSearched = false;
                     this.selectSort(this.sortType);
                 }
                 else {
-                    if (this.sortFlag) {
-                        this.searchFlag = false;
+                    if (this.isSorted) {
+                        this.isSearched = false;
                         this.searchedArray = this.selectSort(this.sortType).filter(film => film.name
                                             .toLowerCase().includes(this.searchInput.toLowerCase()));
                     }
                     else 
                         this.searchedArray = this.json.filter(film => film.name.toLowerCase()
                                             .includes(this.searchInput.toLowerCase()));
-                    this.searchFlag = true;               
+                    this.isSearched = true;               
                     this.$emit('search', this.searchedArray);
                 }
                 return this.searchedArray;
             },
+            //Запускает функцию сортировки с нужными параметрами
             selectSort (value) {
                 this.sortType = value;
                 if (this.sortType === 'best')
@@ -83,8 +85,8 @@
                 else if (this.sortType === 'oldest')
                     this.sortedArray = this.shellSort( false, 'year');  
                 else {
-                    this.sortFlag = false;
-                    if (this.searchFlag)
+                    this.isSorted = false;
+                    if (this.isSearched)
                         this.sortedArray = this.searchFilm();
                     else 
                         this.sortedArray = JSON.parse(JSON.stringify(this.json));
@@ -92,10 +94,12 @@
                 this.$emit('sort', this.sortedArray); 
                 return this.sortedArray;
             },
+            //Сортировка массива с помощью сортировки Шелла. Входные параметры - 
+            //поля из базы данных и знак сравнения(больше/меньше)
             shellSort (sign, param1, param2) {
                 let array;
-                this.sortFlag = true;
-                if (this.searchFlag) 
+                this.isSorted = true;
+                if (this.isSearched) 
                     array = this.searchedArray;
                 else 
                     array = JSON.parse(JSON.stringify(this.json));

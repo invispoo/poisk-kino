@@ -1,4 +1,5 @@
 <template>
+    <!--Верхняя панель сайта-->
     <div class="toolbar">
         <a-row class="toolbar-container">
             <a-col>

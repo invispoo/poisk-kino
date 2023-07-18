@@ -3,12 +3,13 @@ import { defineStore } from 'pinia'
 export const useTabStore = defineStore('tabs', {
     state: () => {
         return {
-          tabsList: [],
+          tabsList: [], //список фильмов, добавленных в закладки
         }
     },
     actions: {
+      //Добавляет фильм в список закладок или удаляет, если такой уже есть
       manageTab(film) {
-        let tabFlag = this.tabsList.find(tab => +tab.id === +film.id); //фильм уже есть в закладках
+        let tabFlag = this.tabsList.find(tab => +tab.id === +film.id);
         if (!tabFlag)
           this.tabsList.push(film);
         else

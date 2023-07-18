@@ -26,24 +26,26 @@
         },
         data () {
             return {
-                current: Number,
-                start: Number,
-                end: Number,
+                current: Number, //номер текущей страницы
+                start: Number, //начальный индекс выводимого массива
+                end: Number, //конечный индекс выводимого массива
             } 
         },
         computed: {
+            //Количество страниц для интерфейса пагинации
             pageAmount () {
                 return Math.ceil((this.filmArray.length / 25)) * 10;                    
             },
             ...mapState(usePageStore, ['currentPage', 'startPage', 'endPage'])
         },
         methods: {
+            //С переключением страницы обновляются индексы выводимого массива, сведения отправляются 
+            //в хранилище и в родительский компонент
             onPageChange () {
                 this.start = 25 * (this.current - 1);
                 this.end = 25 * this.current;
                 this.switchPage(this.current, this.start, this.end);
                 this.$emit('page', this.start, this.end);
-
             },
             ...mapActions(usePageStore, ['switchPage'])
         } 

@@ -1,87 +1,87 @@
 <template>
-    <div>
-        <div v-if="shortcutView" @click="$emit('id', element.id)">
-            <a-card hoverable class="film-card">
-                <template #cover>
-                    <img alt="example" :src="element.poster.url" height="385"/>
-                </template>
-                <a-card-meta>
-                    <template #description>
-                            <h2 style="color:black !important;">
-                                <a-tooltip v-if="element.name.length > 29" :title="element.name" placement="bottomLeft" color="#757575">
-                                    <span>
-                                        {{ shortenedName }}
-                                    </span>
-                                </a-tooltip>
-                                <span v-else>
-                                    {{ element.name }}
+    <!--Сокращенный формат карточки фильма-->
+    <div v-if="shortcutView" @click="$emit('id', element.id)">
+        <a-card hoverable class="film-card">
+            <template #cover>
+                <img alt="example" :src="element.poster.url" height="385"/>
+            </template>
+            <a-card-meta>
+                <template #description>
+                        <h2 style="color:black !important;">
+                            <!--Подсказка для сокращенных названий фильмов-->
+                            <a-tooltip v-if="element.name.length > 29" :title="element.name" placement="bottomLeft" color="#757575">
+                                <span>
+                                    {{ shortenedName }}
                                 </span>
-                                
-                            </h2>
-                        <a-space :size="5" style="display: flex; align-items: start;">
-                            <StarOutlined style="font-size: 12px"/>
-                            <h4 style="color:#757575;">
-                                {{ element.rating.kp.toFixed(2) }}
-                            </h4>
-                        </a-space>
-                    </template>
-                </a-card-meta>
-            </a-card>
-        </div>
-
-        <div v-else class="film-page">
-            <router-link :to="'/find-film'">
-                <arrow-left-outlined class="arrow-button" style="color: white;"/>
-            </router-link>
-            <a-row type="flex" justify="center" :gutter="40" style="padding: 60px 200px 80px">
-                <a-col :span="8">
-                    <img alt="example" :src="film.poster.url" height="600"/>   
-                </a-col>
-                <a-col :span="12">
-                    <span class="film-title">
-                        <h1>{{ film.name }}</h1>
-                        <svg @click="manageTab(film)"
-                        width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
-                            :stroke="iconColor"
-                            v-if="!isAddedToTabs"
-                            fill="none"
-                            />
-                            <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
-                            :stroke="iconColor"
-                            v-if="isAddedToTabs"
-                            :fill="iconColor"
-                            />
-                        </svg>
-                    </span>
-                    <i><h2>{{ alternativeName }}</h2></i>
-                    <a-space :size="10">
-                        <h2>{{ film.rating.kp.toFixed(2) }}</h2>
-                        <h2>{{ film.year }}</h2>
-                        <h2>{{ movieLength }}</h2>
-                    </a-space>
-                    <h3 class="film-description">{{ film.description }}</h3>
-                    <span class="film-rate">
-                        <h2>Оценить
-                            <a-rate allow-half
-                            v-model:value="userRate"
-                            :allow-clear="false"
-                            @click="setRate(id, userRate)" 
-                            style="padding: 0 5px"/>
+                            </a-tooltip>
+                            <span v-else>
+                                {{ element.name }}
+                            </span>
                         </h2>
-                    </span>
+                    <a-space :size="5" style="display: flex; align-items: start;">
+                        <StarOutlined style="font-size: 12px"/>
+                        <h4 style="color:#757575;">
+                            {{ element.rating.kp.toFixed(2) }}
+                        </h4>
+                    </a-space>
+                </template>
+            </a-card-meta>
+        </a-card>
+    </div>
+
+    <!--Расширенный формат карточки фильма-->
+    <div v-else class="film-page">
+        <router-link :to="'/find-film'">
+            <arrow-left-outlined class="arrow-button" style="color: white;"/>
+        </router-link>
+        <a-row type="flex" justify="center" :gutter="40" style="padding: 60px 200px 80px">
+            <a-col :span="8">
+                <img alt="example" :src="film.poster.url" height="600"/>   
+            </a-col>
+            <a-col :span="12">
+                <span class="film-title">
+                    <h1>{{ film.name }}</h1>
+                    <svg @click="manageTab(film)"
+                    width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
+                        :stroke="iconColor"
+                        v-if="!isAddedToTabs"
+                        fill="none"
+                        />
+                        <path d="M15.75 5H8.25C7.55964 5 7 5.58763 7 6.3125V19L12 15.5L17 19V6.3125C17 5.58763 16.4404 5 15.75 5Z" 
+                        :stroke="iconColor"
+                        v-if="isAddedToTabs"
+                        :fill="iconColor"
+                        />
+                    </svg>
+                </span>
+                <i><h2>{{ alternativeName }}</h2></i>
+                <a-space :size="10">
+                    <h2>{{ film.rating.kp.toFixed(2) }}</h2>
+                    <h2>{{ film.year }}</h2>
+                    <h2>{{ movieLength }}</h2>
+                </a-space>
+                <h3 class="film-description">{{ film.description }}</h3>
+                <span class="film-rate">
+                    <h2>Оценить
+                        <a-rate allow-half
+                        v-model:value="userRate"
+                        :allow-clear="false"
+                        @click="setRate(id, userRate)" 
+                        style="padding: 0 5px"/>
+                    </h2>
+                </span>
+            </a-col>
+        </a-row>
+        <div v-if="isFilmMatched" :style="recommendationPadding">
+            <h1 style="padding-bottom: 30px;">Рекомендуем посмотреть</h1>
+            <a-row :gutter="recommendationGutter">
+                <a-col :span="recommendationSpan" v-for="el in regMatch">
+                    <router-link :to="'/find-film/' + index">
+                        <film-card @id="index = $event" :element="el" :shortcutView="true"/>
+                    </router-link>
                 </a-col>
             </a-row>
-            <div v-if="regFlag" :style="recommendationPadding">
-                <h1 style="padding-bottom: 30px;">Рекомендуем посмотреть</h1>
-                <a-row :gutter="recommendationGutter">
-                    <a-col :span="recommendationSpan" v-for="el in regMatch">
-                        <router-link :to="'/find-film/' + index">
-                            <film-card @id="index = $event" :element="el" :shortcutView="true"/>
-                        </router-link>
-                    </a-col>
-                </a-row>
-            </div>
         </div>
     </div>
 </template>
@@ -91,26 +91,26 @@
     import { useRateStore } from '../store/rates.js'
     import { useTabStore } from '../store/tabs.js'
     import { mapState, mapActions } from 'pinia'
-    import Icon, { StarOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue'
+    import { StarOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue'
 
     export default {
         components: {
-            Icon, StarOutlined, ArrowLeftOutlined
+            StarOutlined, ArrowLeftOutlined
         },
         props: ['element', 'shortcutView'],
         created () {
+            //Отображает оценку пользователя на странице фильма, если она есть
             let ratedFilm = this.ratesList.find(film => +film.id === +this.id);
             if (ratedFilm) 
                 this.userRate = ratedFilm.rate;
         },
-
         data () {
             return {
                 iconColor: '#FFFFFF',
                 json: json.docs,
-                index: null,
-                userRate: 0,
-                regFlag: true
+                index: null, //id фильма для перехода по страницам
+                userRate: 0, //оценка фильма, поставленная пользователем
+                isFilmMatched: true //есть ли рекомендованные фильмы к данному
             }
         },
         computed: {
@@ -137,12 +137,15 @@
                 if (this.film.alternativeName !== null)
                     return `"${this.film.alternativeName}"`;
             },
+            //Отображает, добавлял ли пользователь данный фильм в закладки
             isAddedToTabs () {
                 return this.tabsList.find(film => +film.id === +this.id) ? true : false;
             },
+            //Выводит сокращенную форму имени, если оно слишком длинное(для сокращенных выводится подсказка)
             shortenedName () {
                 return +this.element.id === 1387021 ? `${this.element.name.slice(0, 19)}...` : `${this.element.name.slice(0, 29)}...`;
             },
+            //Вычисляемые стили для рекомендованных фильмов
             recommendationPadding () {
                 return this.regMatch.length < 5 ? 'padding: 0 325px 100px;' : 'padding: 0 130px 100px;';
             },
@@ -152,9 +155,12 @@
             recommendationSpan () {
                 return this.regMatch.length < 5 ? 6 : 4;
             },
+            // Ищет похожие фильмы опираясь на одинаковые имена/названия(имена актеров, режиссеров, серии фильмов),
+            //а также на жанры, упомянутые в описании фильмов. Подходящие под это условия строки ищутся в названии фильма,
+            //его сокращенном и полном описании в исходной базе данных
             regMatch () {
+                this.isFilmMatched = false;
                 let matchingFilms = [];
-                this.regFlag = false;
                 let reg = /[А-Я][а-яё]*((?=:|$|\s\d)|\s[А-Я][а-яё]*)|[Бб]оевик|[Дд]рам|[Дд]етектив|[Мм]ульт|[Аа]нимац|[Фф]антаст|[Сс]ериал|Marvel/g;
                 let filmMatch = [];
                 let nameMatch = this.film.name.match(reg);
@@ -194,9 +200,9 @@
                         }
                     }
                 }
-                //console.log(array) 
+                //Отображает рекомендованные фильмы, если они есть
                 if (matchingFilms.length > 0) 
-                    this.regFlag = true;               
+                    this.isFilmMatched = true;               
                 return matchingFilms;
             },
         },
@@ -209,7 +215,6 @@
 </script>
 
 <style>
-
     h1, h2, h3 {
         color: white !important;
     }
@@ -249,5 +254,4 @@
         font-size: 40px; 
         padding: 40px 0 0 40px;
     }
-    
 </style>
