@@ -10,11 +10,8 @@
                 />
             </template>
             <template #buttons>
-                    <svg @click="switchToTabs"
-                    fill="#FFFFFF" width="35px" height="35px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#FFFFFF" stroke-width="65" style="padding-top: 5px;">
-                        <path d="m960.481 1412.11 511.758 307.054V170.586c0-31.274-25.588-56.862-56.862-56.862H505.586c-31.274 0-56.862 25.588-56.862 56.862v1548.578l511.757-307.055ZM1585.963 1920 960.48 1544.711 335 1920V170.586C335 76.536 411.536 0 505.586 0h909.79c94.05 0 170.587 76.536 170.587 170.586V1920Z"/>
-                    </svg>
-                    <LikeOutlined @click="switchToRates" style="font-size: 35px; color:#FFFFFF"/> 
+                    <TabIcon @switch="switchToTabs" :isOnMainPage="true"/>
+                    <LikeOutlined @click="switchToRates" class="icon"/> 
             </template>
         </toolbar>
 
@@ -28,8 +25,8 @@
                 />
             </template>
             <template #buttons>
-                    <HomeOutlined @click="switchToHome" style="font-size: 35px; color:#FFFFFF"/> 
-                    <LikeOutlined @click="switchToRates" style="font-size: 35px; color:#FFFFFF"/> 
+                    <HomeOutlined @click="switchToHome" class="icon"/> 
+                    <LikeOutlined @click="switchToRates" class="icon"/> 
             </template>
         </toolbar>
 
@@ -37,41 +34,36 @@
         <toolbar v-if="isRatesShowed">
             <template #filter>
                 <film-filter 
-                @search="filmArray = $event"
+                @search="filmArray = $event" 
                 @sort="filmArray = $event"
                 :json="ratedJson"
                 />
             </template>
             <template #buttons>
-                    <svg @click="switchToTabs" 
-                    fill="#FFFFFF" width="35px" height="35px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#FFFFFF" stroke-width="65" style="padding-top: 5px;">
-                        <path d="m960.481 1412.11 511.758 307.054V170.586c0-31.274-25.588-56.862-56.862-56.862H505.586c-31.274 0-56.862 25.588-56.862 56.862v1548.578l511.757-307.055ZM1585.963 1920 960.48 1544.711 335 1920V170.586C335 76.536 411.536 0 505.586 0h909.79c94.05 0 170.587 76.536 170.587 170.586V1920Z"/>
-                    </svg>
-                    <HomeOutlined @click="switchToHome" style="font-size: 35px; color:#FFFFFF"/> 
+                    <TabIcon @switch="switchToTabs" :isOnMainPage="true"/>
+                    <HomeOutlined @click="switchToHome" class="icon"/> 
             </template>
         </toolbar>
 
         <!--Отображение карточек фильмов-->
         <div class="card-view">
-            <div>
-                <u style="color:white">
-                    <h1 v-if="isTabsShowed" style="font-size: 38px">Фильмы в закладках</h1>
-                    <h1 v-if="isRatesShowed" style="font-size: 38px">Оцененные фильмы</h1>
-                </u>
-            </div>
+            <u class="large-text">
+                <h1 v-if="isTabsShowed" class="large-text">Фильмы в закладках</h1>
+                <h1 v-if="isRatesShowed" class="large-text">Оцененные фильмы</h1>
+            </u>
             <div style="padding-top: 10px">
                 <span v-if="unsuccessfulSearch">
-                    <h1 style="font-size: 30px">По вашему запросу ничего не найдено...</h1>
-                    <h2>Попробуйте изменить условия поиска.</h2>
+                    <h1 class="medium-text">По вашему запросу ничего не найдено...</h1>
+                    <h2 style="color: white">Попробуйте изменить условия поиска.</h2>
                 </span>
                 <span v-if="tabsList.length === 0 && isTabsShowed">
-                    <h1 style="font-size: 30px">Вы еще не добавляли фильмы в закладки.</h1>
+                    <h1 class="medium-text">Вы еще не добавляли фильмы в закладки.</h1>
                 </span>
                 <span v-if="ratesList.length === 0 && isRatesShowed">
-                    <h1 style="font-size: 30px">Вы еще не оценивали фильмы.</h1>
+                    <h1 class="medium-text">Вы еще не оценивали фильмы.</h1>
                 </span>
             </div>
-            <a-row :gutter="[40, 40]">
+            <a-row :gutter="[32, 40]">
                 <a-col :span="4" v-for="el in filmArray.slice(start, end)">
                     <router-link :to="'/find-film/' + index">
                         <film-card @id="index = $event" :element="el" :shortcutView="true"/>
@@ -92,6 +84,7 @@
     import FilmFilter from './FilmFilter.vue'
     import Pagination from './Pagination.vue'
     import Toolbar from './Toolbar.vue'
+    import TabIcon from '../icons/TabIcon.vue'
     import { mapState, mapActions } from 'pinia'
     import { useTabStore } from '../store/tabs.js'
     import { useRateStore } from '../store/rates.js'
@@ -100,7 +93,7 @@
     
     export default {
         components: {
-            FilmCard, FilmFilter, Pagination, Toolbar, LikeOutlined, HomeOutlined, 
+            FilmCard, FilmFilter, Pagination, Toolbar, LikeOutlined, HomeOutlined, TabIcon
         },
         created() {
             //Для возврата на последний вид главной страницы после просмотра расширенной карточки фильма
@@ -125,11 +118,11 @@
         data () {
             return {
                 json: json.docs,
-                index: Number, //id фильма для перехода по страницам
-                filmArray: Array, //массив фильмов, отображаемый на странице в данный момент
-                ratedJson: Array, //массив элементов исходной базы данных, которым пользователь поставил оценку
-                start: Number, //начальный индекс выводимого массива для пагинации
-                end: Number, //конечный индекс выводимого массива для пагинации
+                index: null, //id фильма для перехода по страницам
+                filmArray: [], //массив фильмов, отображаемый на странице в данный момент
+                ratedJson: [], //массив элементов исходной базы данных, которым пользователь поставил оценку
+                start: null, //начальный индекс выводимого массива для пагинации
+                end: null, //конечный индекс выводимого массива для пагинации
             }
         },
         methods: {
@@ -152,8 +145,9 @@
                 this.ratedJson = [];
                 for (let i = 0; i < this.ratesList.length; i++) {
                     let ratedFilm = this.json.find(film => +film.id === +this.ratesList[i].id);
-                    if (this.ratedJson.indexOf(ratedFilm) === -1)
+                    if (this.ratedJson.indexOf(ratedFilm) === -1) {
                         this.ratedJson.push(ratedFilm);
+                    }
                 }
                 this.filmArray = this.ratedJson;
                 this.goToRates();
@@ -163,12 +157,28 @@
 </script>
 
 <style>
+
     .container {
         min-height: 900px;
     }
 
     .card-view {
-        padding: 80px 80px; 
+        padding: 80px 95px; 
         margin: 0 auto;
+    }
+
+    .icon {
+        font-size: 35px; 
+        color: white !important;
+    }
+
+    .medium-text {
+        font-size: 30px;
+        color: white;
+    }
+
+    .large-text {
+        font-size: 38px;
+        color: white
     }
 </style>

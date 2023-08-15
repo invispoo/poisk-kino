@@ -10,7 +10,9 @@
     import { mapState, mapActions } from 'pinia'
     import { usePageStore } from '../store/pages.js'
     export default {
-        props: ['filmArray'],
+        props: {
+            filmArray: Array
+        },
         emits: ['page'],
         created () {
             this.current = this.currentPage;
@@ -20,15 +22,16 @@
         },
         updated () {
             let actualPageAmount = this.pageAmount / 10;
-            if (this.current > actualPageAmount)
+            if (this.current > actualPageAmount) {
                 this.current = 1;
+            }
             this.onPageChange()
         },
         data () {
             return {
-                current: Number, //номер текущей страницы
-                start: Number, //начальный индекс выводимого массива
-                end: Number, //конечный индекс выводимого массива
+                current: null, //номер текущей страницы
+                start: null, //начальный индекс выводимого массива
+                end: null, //конечный индекс выводимого массива
             } 
         },
         computed: {

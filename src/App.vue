@@ -1,5 +1,4 @@
 <template>
-  <!-- style="margin: 30px 50px;"-->
   <div class="app">
     <router-view></router-view>
   </div>

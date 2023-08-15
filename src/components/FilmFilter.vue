@@ -35,12 +35,14 @@
         components: {
             SettingOutlined
         },
-        props: ['json'],
+        props: {
+            json: Array
+        },
         emits: ['search', 'sort'],
         data () {
             return {
-                sortedArray: Array, //отсортированный массив
-                sortType: String, //вид сортировка
+                sortedArray: [], //отсортированный массив
+                sortType: '', //вид сортировка
                 isSorted: false, //флаг сортировки
                 searchedArray: [], //массив результата поиска
                 searchInput: '', //текст поискового запроса
@@ -63,9 +65,10 @@
                         this.searchedArray = this.selectSort(this.sortType).filter(film => film.name
                                             .toLowerCase().includes(this.searchInput.toLowerCase()));
                     }
-                    else 
+                    else {
                         this.searchedArray = this.json.filter(film => film.name.toLowerCase()
                                             .includes(this.searchInput.toLowerCase()));
+                    }
                     this.isSearched = true;               
                     this.$emit('search', this.searchedArray);
                 }
@@ -73,24 +76,37 @@
             },
             //Запускает функцию сортировки с нужными параметрами
             selectSort (value) {
+                let args;
                 this.sortType = value;
-                if (this.sortType === 'best')
-                    this.sortedArray = this.shellSort(true, 'rating',  'kp');
-                else if (this.sortType === 'longest')
-                    this.sortedArray = this.shellSort(true, 'movieLength');
-                else if (this.sortType === 'shortest')
-                    this.sortedArray = this.shellSort(false, 'movieLength');
-                else if (this.sortType === 'newest')
-                    this.sortedArray = this.shellSort(true, 'year');
-                else if (this.sortType === 'oldest')
-                    this.sortedArray = this.shellSort( false, 'year');  
-                else {
-                    this.isSorted = false;
-                    if (this.isSearched)
-                        this.sortedArray = this.searchFilm();
-                    else 
-                        this.sortedArray = JSON.parse(JSON.stringify(this.json));
+                switch (this.sortType) {
+                    case 'best':
+                        args = [true, 'rating',  'kp'];
+                        break;
+                    case 'longest':
+                        args = [true, 'movieLength'];
+                        break;
+                    case 'shortest':
+                        args = [false, 'movieLength'];
+                        break;
+                    case 'newest':
+                        args = [true, 'year'];
+                        break;
+                    case 'oldest':
+                        args = [false, 'year'];
+                        break;
+                    default: {
+                        this.isSorted = false;
+                        if (this.isSearched) {
+                            this.sortedArray = this.searchFilm();
+                        }
+                        else {
+                            this.sortedArray = JSON.parse(JSON.stringify(this.json));
+                        }
+                        this.$emit('sort', this.sortedArray); 
+                        return this.sortedArray;
+                    }
                 }
+                this.sortedArray = this.shellSort(...args);
                 this.$emit('sort', this.sortedArray); 
                 return this.sortedArray;
             },
@@ -99,10 +115,12 @@
             shellSort (sign, param1, param2) {
                 let array;
                 this.isSorted = true;
-                if (this.isSearched) 
+                if (this.isSearched) {
                     array = this.searchedArray;
-                else 
+                }
+                else {
                     array = JSON.parse(JSON.stringify(this.json));
+                }
                 var increment = Math.floor(array.length / 2);
                 while (increment > 0) {
                     for (let i = increment; i < array.length; i++) {
@@ -128,10 +146,12 @@
                         }
                         array[j] = temp;
                     }
-                    if (increment == 2) 
+                    if (increment == 2) {
                         increment = 1;
-                    else 
+                    }
+                    else {
                         increment = parseInt(increment*5 / 11);
+                    }
                 }
                 return array;
             }
