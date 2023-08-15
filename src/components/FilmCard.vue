@@ -65,8 +65,8 @@
             <h1 class="header" style="padding-bottom: 30px;">Рекомендуем посмотреть</h1>
             <a-row :gutter="recommendationStyles.gutter">
                 <a-col :span="recommendationStyles.span" v-for="el in regMatch">
-                    <router-link :to="'/find-film/' + index">
-                        <film-card @id="index = $event" :element="el" :shortcutView="true"/>
+                    <router-link :to="'/find-film/' + recommendedFilmId">
+                        <film-card @id="recommendedFilmId = $event" :element="el" :shortcutView="true"/>
                     </router-link>
                 </a-col>
             </a-row>
@@ -101,7 +101,7 @@
         data () {
             return {
                 json: json.docs,
-                index: null, //id фильма для перехода по страницам
+                recommendedFilmId: null, //id фильма для перехода по страницам
                 userRate: 0, //оценка фильма, поставленная пользователем
                 isFilmMatched: true //есть ли рекомендованные фильмы к данному
             }
